@@ -1,87 +1,120 @@
-# Employee Attrition Analysis Dashboard
+# Workforce Attrition Risk Analysis
 
-An end-to-end HR analytics project built entirely in Excel, covering raw data intake, data cleaning, feature engineering, statistical analysis, and an interactive dashboard for exploring employee attrition.
+37.9% of 1,000 employees left. Overtime workers leave at 43.7% vs 32.8% for non-overtime staff — the single most actionable signal in the dataset. This project identifies the behavioural and structural drivers of attrition across departments, age bands, and salary tiers, and delivers an interactive Excel dashboard for HR leadership.
 
-## Overview
+---
 
-This project analyzes attrition across **1,000 employees** spanning **7 departments**, sourced from an HR Information System. The workbook is structured as a five-stage pipeline, all within a single `.xlsx` file, so the entire workflow (from raw, messy data to a polished interactive dashboard) is transparent and auditable.
+## Business Problem
 
-**Headline numbers:**
+High attrition is expensive. Replacing an employee costs 50–200% of their annual salary in recruiting, onboarding, and lost productivity. This project goes beyond reporting the attrition rate to identifying which employee groups are highest risk, which drivers are actionable, and what HR can do about each one.
 
-| Metric | Value |
+---
+
+## Key Findings
+
+| Finding | Detail |
 |---|---|
-| Total Employees | 1,000 |
-| Attrition Rate | 37.9% |
-| Retention Rate | 62.1% |
-| Avg Monthly Salary | ₹91,316 |
-| Avg Tenure | 10.4 yrs |
-| Avg Age | 41.5 yrs |
-| Avg Job Satisfaction | 3.0 / 5 |
+| Overall attrition rate | 37.9% (379 of 1,000 employees left) |
+| Highest risk department | Sales — 42.4% attrition |
+| Second highest department | Finance — 40.6% attrition |
+| Lowest risk department | HR — 22.5% (worth studying for replicable practices) |
+| Overtime workers | 43.7% attrition vs 32.8% non-overtime — strongest single signal |
+| New employees (<2 yrs) | 46.7% attrition — highest of any tenure group |
+| Young employees (<30) | 47.3% attrition — highest of any age group |
+| Frequent travelers | 44.5% attrition — hybrid or travel allowances may help |
+| Salary finding | Low salary band (< ₹50K) has one of the lowest attrition rates (28.9%) — salary alone is not the primary driver |
+
+**Critical insight:** The High salary band (₹80–120K) shows the highest attrition at 41%. This challenges the assumption that paying more retains employees. Workload, growth opportunities, and work-life balance appear to be stronger drivers than compensation at these salary levels.
+
+---
+
+## Analytical Workflow
+
+**Stage 1 — Raw Data**
+- 1,000 employee records, 18 columns
+- Source: HR Information System
+- Intentional missing values included for data cleaning practice
+
+**Stage 2 — Data Cleaning**
+- 38 missing values across Age, Department, Monthly Salary, and Job Satisfaction
+- Each imputed with a documented method: median (continuous), mode (categorical), or "Unknown" (unresolvable)
+- Domain logic validation: "Years_At_Company cannot exceed Age minus 21" applied to catch impossible records
+- Outlier detection: IQR method for Age and Salary, Z-score for Distance_From_Home
+- Duplicate check: 0 duplicates found
+- Full audit trail documented in the Documentation sheet
+
+**Stage 3 — Feature Engineering (7 derived columns)**
+
+| Column | Logic | Purpose |
+|---|---|---|
+| Attrition_Flag | 1/0 from Yes/No | Enables numeric aggregation |
+| Age_Group | Young (<30), Mid (30-40), Senior (40-50), Veteran (50+) | Age-band analysis |
+| Salary_Band | Low (<50K), Mid (50-80K), High (80-120K), Premium (120K+) | Compensation segment analysis |
+| Tenure_Group | New (<2 yrs), Developing (2-5), Established (5-10), Veteran (10+) | Tenure risk analysis |
+| Satisfaction_Label | Text mapped from 1–5 score | Dashboard readability |
+| Performance_Label | Text mapped from 1–5 score | Dashboard readability |
+| WLB_Label | Text mapped from 1–5 score | Dashboard readability |
+
+**Stage 4 — Analysis (6 breakdown tables)**
+- Attrition rate by Department, Age Group, Salary Band, Tenure Group, OverTime, Business Travel
+- Each table includes headcount, leavers, attrition rate, and risk flag
+
+**Stage 5 — Dashboard**
+- One-page interactive view with Department and Gender slicers
+- KPI cards: Total Employees, Employees Left, Attrition Rate, Retention Rate, Avg Salary, Avg Tenure, Avg Age
+- 6 charts: Department, Age Group, Salary Band, Tenure Group (bar), OverTime (stacked bar), Business Travel (donut)
+
+---
 
 ## Workbook Structure
 
 | Sheet | Purpose |
 |---|---|
-| `Raw_Data` | Original 1,000-row, 18-column dataset, including intentional missing values for cleaning practice |
-| `Data_cleaning` | Cleaned dataset (27 columns) with imputed values, validated business rules, and 7 newly engineered columns |
-| `Documentation` | Full data quality audit trail: null checks, domain logic validation, outlier detection methodology, and a step-by-step cleaning log |
-| `Analysis` | Key metrics plus six breakdown tables (Department, Age Group, Salary Band, Tenure Group, OverTime, Business Travel) with computed attrition rates and risk flags |
-| `Dashboard` | Interactive one-page view with slicers, KPI cards, and six charts |
+| Raw_Data | Original 1,000-row, 18-column dataset |
+| Data_Cleaning | Cleaned dataset with 27 columns including 7 engineered features |
+| Documentation | Full audit trail: null checks, domain logic rules, outlier methodology, cleaning log |
+| Analysis | 6 breakdown tables with attrition rates and risk flags |
+| Dashboard | Interactive one-page view with slicers and KPI cards |
 
-## Data Cleaning & Quality Checks
+---
 
-- **Missing values:** 38 total across Age, Department, Monthly_Salary, and Job_Satisfaction, each imputed with a documented method (median, mode, or "Unknown" category)
-- **Domain logic validation:** rules like "Years_At_Company cannot exceed Age minus 21" applied to catch impossible records
-- **Outlier detection:** IQR method for Age and Salary, Z-score method for Distance_From_Home, all checked and confirmed clean
-- **Duplicate check:** 0 duplicate records found
+## Tech Stack
 
-## Feature Engineering
+- Excel PivotTables and PivotCharts
+- Slicers for interactive cross-chart filtering
+- Formulas: COUNTIF, AVERAGE, QUARTILE, SKEW, STDEV, nested IF for feature binning
+- IQR and Z-score outlier detection
+- Power BI for departmental heatmaps and tenure breakdown visualisations
 
-Seven new columns were derived from raw fields to make analysis and dashboard filtering easier:
+---
 
-- `Attrition_Flag`: numeric 1/0 version of Attrition
-- `Age_Group`: Young (<30), Mid (30-40), Senior (40-50), Veteran (50+)
-- `Salary_Band`: Low (<50K), Mid (50-80K), High (80-120K), Premium (120K+)
-- `Tenure_Group`: New (<2 yrs), Developing (2-5), Established (5-10), Veteran (10+)
-- `Satisfaction_Label`, `Performance_Label`, `WLB_Label`: text labels mapped from 1-5 numeric scores
+## Repository Structure
 
-## Key Findings
+```
+workforce-attrition-risk-analysis/
+├── README.md
+└── Employee_Attrition_Analysis.xlsx
+    ├── Raw_Data
+    ├── Data_Cleaning
+    ├── Documentation
+    ├── Analysis
+    └── Dashboard
+```
 
-- **Sales (42.4%) and Finance (40.6%)** departments show the highest attrition, pointing to workload or compensation issues
-- **New employees (<2 yrs)** leave at 46.7%, the highest of any tenure group, signaling an onboarding and early-engagement gap
-- **Young employees (<30)** leave at 47.3%, the highest of any age group, suggesting a need for clearer career growth paths
-- **Overtime workers** leave at 43.7% versus 32.8% for non-overtime staff, a critical and immediately actionable signal
-- **Frequent travelers** leave at 44.5%, suggesting travel allowances or hybrid arrangements could help
-- **HR (22.5%)** has the lowest attrition of any department, worth studying for practices that could be replicated elsewhere
-- Salary alone doesn't appear to be the primary driver: the Low salary band actually has one of the lowest attrition rates (28.9%), while High salary band (80-120K) attrition is the highest at 41%
-
-## Dashboard Features
-
-- **Slicers:** Department, Gender (interactive cross-filtering across all visuals)
-- **KPI cards:** Total Employees, Employees Left, Attrition Rate, Retention Rate, Avg Salary, Avg Tenure, Avg Age
-- **Charts:** Attrition by Department, Age Group, Salary Band, and Tenure Group (bar charts); Attrition by OverTime (stacked bar); Attrition by Business Travel (donut)
+---
 
 ## How to Use
 
-1. Download `Employee_Attrition_Analysis.xlsx` and open it in Excel
+1. Download `Employee_Attrition_Analysis.xlsx` and open in Excel (2016 or later recommended for full slicer support)
 2. Go to the **Dashboard** tab for the interactive view
-3. Use the Department and Gender slicers to filter all charts and KPIs at once
-4. Open the **Analysis** tab to see the underlying breakdown tables behind each chart
-5. Check the **Documentation** tab for the full data cleaning and validation methodology
+3. Use the **Department** and **Gender** slicers to filter all charts and KPIs simultaneously
+4. Open the **Analysis** tab to see the breakdown tables behind each chart
+5. Check the **Documentation** tab for the full data cleaning methodology and audit trail
 
-## Tools & Techniques
-
-- Excel PivotTables and PivotCharts
-- Slicers for interactive, cross-chart filtering
-- Formulas: `COUNTIF`, `AVERAGE`, `QUARTILE`, `SKEW`, `STDEV`, nested `IF` for binning
-- Data cleaning: median/mode imputation, domain validation rules, IQR and Z-score outlier detection
-- Feature engineering: 7 derived categorical fields built from continuous and ordinal source data
+---
 
 ## Planned Enhancements
 
-- Additional slicers for OverTime, Business_Travel, Age_Group, and Tenure_Group to enable deeper drill-down
+- Additional slicers for OverTime, Business Travel, Age Group, and Tenure Group
 - A toggle to isolate "Left" vs "Stayed" employees across all visuals simultaneously
-
-## License
-
-This project is open for personal and educational use. Update this section with your preferred license (e.g., MIT) before publishing.
+- Migration to Power BI for richer interactivity and drill-through capability
