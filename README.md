@@ -93,14 +93,18 @@ High attrition is expensive. Replacing an employee costs 50–200% of their annu
 ```
 workforce-attrition-risk-analysis/
 ├── README.md
-└── Employee_Attrition_Analysis.xlsx
-    ├── Raw_Data
-    ├── Data_Cleaning
-    ├── Documentation
-    ├── Analysis
-    └── Dashboard
+├── workforce_attrition_risk_analysis.xlsx
+│   ├── Raw_Data
+│   ├── Data_Cleaning
+│   ├── Documentation
+│   ├── Analysis
+│   └── Dashboard
+└── screenshots/
+    ├── dashboard_overview.png
+    ├── key_findings.png
+    ├── analysis_breakdown_tables.png
+    └── documentation_cleaning_summary.png
 ```
-
 ---
 
 ## How to Use
